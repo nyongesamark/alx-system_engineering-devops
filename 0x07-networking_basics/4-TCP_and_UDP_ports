@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# use nestat to list all sockets that are in the listening state
+netstat -tulpn | grep 'LISTENING' | awk '{print $4, $7}' | while read line; do
+# get the port number from socket address
+port=$(echo $line | awk -F':' '{print $2}')
+# use the lsof command get the PID and name of program to which the socket belongs
+lsof -i :$port | awk 'NR>1 {print $1, $2}'
+done
