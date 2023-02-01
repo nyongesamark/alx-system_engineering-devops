@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+#Get current IP address of location
+localhost_ip=$(hostname -I | awk '{print $1}'
+
+#Checkec if localhost is already resolving to 127.0.0.2
+if ["$localhost_ip"== "127.0.0.2"]; then
+echo "localhost is already resolving to 127.0.0.2"
+else
+
+# Backup original /etc/hosts file
+sudo cp /etc/hosts /etc/hosts.bak
+
+#Replace localhost IP with 127.0.0.2
+sudo sed -i "s/^$localhost_ip/127.0.0.2/g" /etc/hosts
+
+#Check if the update was successful
+localhost_ip=$(hostname -I | awk '{print $1}')
+echo "localhost successfully resolved to 127.0.0.2"
+else
+	echo "Failed to resolve localhost to 127.0.0.2
+fi
+fi
+
+# Check if facebook.com is already resolving to 8.8.8.8
+facebook_ip=$(host facebook.com | awk '{print $4}')
+if ["$facebook_ip"== "8.8.8.8"]; then
+	echo "facebook.com is already resolving to 8.8.8.8"
+else
+	#Backup original /etc/hosts file
+	sudo cp /etc/host /etc/hosts.bak
+
+	# add facebook.com IP to /etc/hosts
+	echo "8.8.8.8 facebook.com" | sudo tee -a /etc/hosts
+
+	#check if the update was successful
+	facebook_ip=$(host facebook.com | awk '{print $4}')
+	if ["$facebook_ip"== "8.8.8.8."]; then
+		echo "facebook.com successfully resolved to 8.8.8.8"
+	else 
+		"Failed to resolve facebook.com to 8.8.8.8"
+		fi
+	fi
+
+	#Make the changes take effect in the docker cointainer
+	sudo service docker restsrt
